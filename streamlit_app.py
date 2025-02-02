@@ -1,10 +1,15 @@
 import streamlit as st
 
-# Load phase list
-PHASES = [
-    "Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5",
-    "Phase 6", "Phase 7", "Phase 8", "Phase 9", "Phase 10"
-]
+# Load phase list from JSON file
+PHASES_FILE = "phases.json"
+try:
+    with open(PHASES_FILE, "r") as f:
+        PHASES = json.load(f)
+except (FileNotFoundError, json.JSONDecodeError):
+    PHASES = [
+        "Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5",
+        "Phase 6", "Phase 7", "Phase 8", "Phase 9", "Phase 10"
+    ]
 
 # Initialize game state in Streamlit session
 if "game_state" not in st.session_state:
