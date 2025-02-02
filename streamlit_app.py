@@ -49,6 +49,24 @@ def update_score(player, score, completed):
                 st.session_state["game_state"]["phases"][player] = selected_phases[current_phase_index + 1]
     st.rerun()
 
+# Function to soft reset (keep players but reset scores)
+def soft_reset():
+    for player in st.session_state["game_state"]["players"]:
+        st.session_state["game_state"]["total_scores"][player] = 0
+        st.session_state["game_state"]["phases"][player] = st.session_state["game_state"].get("selected_phases", PHASES)[0]
+    st.rerun()
+
+# Function to full reset (clear all data)
+def total_reset():
+    st.session_state["game_state"] = {
+        "players": [],
+        "scores": {},
+        "phases": {},
+        "total_scores": {},
+        "selected_phases": PHASES[:3] if PHASES else ["Unknown Phase"]
+    }
+    st.rerun()
+
 # UI Layout
 st.title("Phase Out Scoreboard")
 
