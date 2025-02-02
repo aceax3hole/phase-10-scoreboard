@@ -16,6 +16,8 @@ if "phase_progress" not in st.session_state:
     st.session_state.phase_progress = {}
 if "game_history" not in st.session_state:
     st.session_state.game_history = []
+if "selected_phases" not in st.session_state:
+    st.session_state.selected_phases = phases
 
 # Header and layout
 st.title("Phase 10 Scoreboard")
@@ -39,13 +41,24 @@ if st.session_state.players:
             del st.session_state.scores[player]
             del st.session_state.phase_progress[player]
 
+# Phase Selection
+st.sidebar.subheader("Select Phases")
+selected_phases = st.sidebar.multiselect("Choose which phases to include:", options=phases, default=phases)
+st.session_state.selected_phases = selected_phases
+
+# New Game Button
+if st.sidebar.button("New Game"):
+    st.session_state.scores = {player: 0 for player in st.session_state.players}
+    st.session_state.phase_progress = {player: 0 for player in st.session_state.players}
+    st.success("Game reset successfully!")
+
 # Main interface
 if st.session_state.players:
     st.subheader("Leaderboard")
     leaderboard_data = {
         "Player": st.session_state.players,
         "Score": [st.session_state.scores[player] for player in st.session_state.players],
-        "Phase": [st.session_state.phase_progress[player] for player in st.session_state.players],
+        "Phase": [st.session_state.selected_phases[st.session_state.phase_progress[player]] if st.session_state.phase_progress[player] < len(st.session_state.selected_phases) else "Completed" for player in st.session_state.players],
     }
     leaderboard_df = pd.DataFrame(leaderboard_data).sort_values(by="Score", ascending=False)
     st.table(leaderboard_df)
