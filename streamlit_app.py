@@ -3,8 +3,13 @@ import json
 
 # Load phase list (you can move this to an external JSON file)
 PHASES = [
-    "Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5",
-    "Phase 6", "Phase 7", "Phase 8", "Phase 9", "Phase 10"
+    "2 sets of 3", "1 set of 3 + 1 run of 4", "1 set of 4 + 1 run of 4", "1 run of 7", "1 run of 8",
+    "1 run of 9", "2 sets of 4", "7 cards of one color", "1 set of 5 + 1 set of 2", "1 set of 5 + 1 set of 3",
+    "1 run of 4 of one color", "1 run of 6 of one color", "1 run of 4 + 6 cards of one color", "1 run of 6 + 4 cards of one color", "8 cards of one color",
+    "9 cards of one color", "3 sets of 3", "1 set of 4 + 1 run of 6", "1 set of 5 + 1 run of 5", "1 set of 5 + 5 cards of one color",
+    "5 sets of 2", "1 run of 10", "10 cards of one color", "1 run of 5 of odd numbers of one color + 1 run of 5 of even numbers of one color", "1 set of 5 + 1 run of 5 odd numbers",
+    "1 set of 5 + 1 run of 5 even numbers", "1 set of 4 + 1 run of 3 + 1 set of 3 of one color", "1 run of 5 + 1 run of 5 odd numbers of one color", "1 run of 5 + 1 run of 5 even numbers of one color", "2 sets of 5"
+
 ]
 
 # Initialize game state in Streamlit session
