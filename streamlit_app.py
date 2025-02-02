@@ -1,4 +1,15 @@
 import streamlit as st
+import json
+
+# Load phase list from JSON file
+PHASES_FILE = "phases.json"
+try:
+    with open(PHASES_FILE, "r") as f:
+        PHASES = json.load(f)
+    if not isinstance(PHASES, list) or not PHASES:  # Ensure it's a valid list
+        raise ValueError("Phase list is empty or invalid")
+except Exception:
+    PHASES = ["Unknown Phase"]
 
 # Initialize game state in Streamlit session
 if "game_state" not in st.session_state:
