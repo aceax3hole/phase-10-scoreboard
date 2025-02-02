@@ -67,9 +67,10 @@ if st.session_state.players:
     for player in st.session_state.players:
         with st.expander(f"Enter Score for {player}"):
             new_score = st.number_input(f"Score for {player}", min_value=0, step=5, key=f"score_{player}")
+            phase_complete = st.checkbox(f"Phase Complete for {player}", key=f"phase_{player}")
             if st.button(f"Update {player}"):
                 st.session_state.scores[player] -= new_score
-                if st.checkbox(f"Phase Complete for {player}"):
+                if phase_complete:
                     st.session_state.phase_progress[player] += 1
 
     # Save game state
