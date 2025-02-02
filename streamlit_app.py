@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import os
 import pandas as pd
+import copy
 
 # Load phases from JSON file
 with open("phases.json", "r") as file:
@@ -50,6 +51,7 @@ st.session_state.selected_phases = selected_phases
 if st.sidebar.button("New Game"):
     st.session_state.scores = {player: 0 for player in st.session_state.players}
     st.session_state.phase_progress = {player: 0 for player in st.session_state.players}
+    st.session_state.game_history = []
     st.success("Game reset successfully!")
 
 # Main interface
@@ -75,18 +77,31 @@ if st.session_state.players:
 
     # Save game state
     if st.button("Save Game State"):
-        st.session_state.game_history.append({
-            "players": st.session_state.players,
-            "scores": st.session_state.scores,
-            "phase_progress": st.session_state.phase_progress,
-        })
+        game_state = {
+            "players": copy.deepcopy(st.session_state.players),
+            "scores": copy.deepcopy(st.session_state.scores),
+            "phase_progress": copy.deepcopy(st.session_state.phase_progress),
+            "selected_phases": copy.deepcopy(st.session_state.selected_phases)
+        }
+        st.session_state.game_history.append(game_state)
         st.success("Game state saved!")
 
     # Export game history
     if st.button("Export Game History"):
-        history_df = pd.DataFrame(st.session_state.game_history)
-        history_csv = history_df.to_csv(index=False).encode("utf-8")
-        st.download_button("Download Game History as CSV", data=history_csv, file_name="game_history.csv", mime="text/csv")
+        if st.session_state.game_history:
+            flattened_history = []
+            for state in st.session_state.game_history:
+                for player in state["players"]:
+                    flattened_history.append({
+                        "Player": player,
+                        "Score": state["scores"][player],
+                        "Phase": state["selected_phases"][state["phase_progress"][player]] if state["phase_progress"][player] < len(state["selected_phases"]) else "Completed"
+                    })
+            history_df = pd.DataFrame(flattened_history)
+            history_csv = history_df.to_csv(index=False).encode("utf-8")
+            st.download_button("Download Game History as CSV", data=history_csv, file_name="game_history.csv", mime="text/csv")
+        else:
+            st.warning("No game history available to export.")
 else:
     st.write("Add players to begin the game.")
 
