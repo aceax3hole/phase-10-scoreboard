@@ -1,6 +1,6 @@
 import streamlit as st
 
-# Load phase list (you can move this to an external JSON file)
+# Load phase list
 PHASES = [
     "Phase 1", "Phase 2", "Phase 3", "Phase 4", "Phase 5",
     "Phase 6", "Phase 7", "Phase 8", "Phase 9", "Phase 10"
@@ -64,7 +64,7 @@ if st.button("Add Player"):
 st.subheader("Current Scores & Phases")
 if st.session_state["game_state"]["players"]:
     for player in st.session_state["game_state"]["players"]:
-        col1, col2, col3, col4 = st.columns([2, 2, 1, 1])
+        col1, col2, col3, col4, col5 = st.columns([2, 2, 1, 1, 1])
 
         col1.write(f"**{player}**")
         col2.write(st.session_state["game_state"]["phases"][player])
@@ -77,6 +77,9 @@ if st.session_state["game_state"]["players"]:
         
         if st.button(f"Update {player}"):
             update_score(player, score_input, phase_completed)
+        
+        # Display total score
+        col5.write(f"Total: {st.session_state["game_state"]["total_scores"].get(player, 0)}")
 
 # Buttons for resetting the game
 st.button("Soft Reset", on_click=soft_reset)
