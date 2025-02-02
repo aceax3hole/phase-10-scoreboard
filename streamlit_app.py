@@ -52,9 +52,12 @@ def update_score(player, score, completed):
 # UI Layout
 st.title("Phase Out Scoreboard")
 
-# Phase Selection Section
-st.subheader("Select Phases to Use")
-selected_phases = st.multiselect("Choose Phases", PHASES, default=st.session_state["game_state"]["selected_phases"])
+# Sidebar for Phase Selection
+st.sidebar.header("Select Phases to Use")
+if "selected_phases" not in st.session_state["game_state"]:
+    st.session_state["game_state"]["selected_phases"] = PHASES[:3] if PHASES else ["Unknown Phase"]
+
+selected_phases = st.sidebar.multiselect("Choose Phases", PHASES, default=st.session_state["game_state"]["selected_phases"])
 if selected_phases:
     st.session_state["game_state"]["selected_phases"] = selected_phases
     for player in st.session_state["game_state"]["players"]:
@@ -69,8 +72,12 @@ if st.button("Add Player"):
 
 # Display Scoreboard with styling
 st.subheader("Current Scores & Phases")
-for player in st.session_state["game_state"]["players"]:
-    with st.container():
+num_players = len(st.session_state["game_state"]["players"])
+num_cols = max(2, (num_players + 1) // 2)
+cols = st.columns(num_cols)
+
+for i, player in enumerate(st.session_state["game_state"]["players"]):
+    with cols[i % num_cols]:
         st.markdown(
             f"""
             <div style="border-radius: 10px; padding: 15px; background-color: #2C5F2D; color: white;">
