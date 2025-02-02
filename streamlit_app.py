@@ -32,7 +32,7 @@ def add_player(player_name):
 # Function to update all players
 def update_all_players():
     for player in st.session_state["game_state"]["players"]:
-        update_score(player, st.session_state["game_state"]["scores"].get(player, 0), True)
+        update_score(player, st.session_state["game_state"]["scores"].get(player, 0), st.session_state["game_state"]["phases"].get(player, False))
     st.rerun()
 
 # Function to update score
@@ -47,6 +47,9 @@ def update_score(player, score, completed):
             ) if selected_phases else -1
             if current_phase_index != -1 and current_phase_index < len(selected_phases) - 1:
                 st.session_state["game_state"]["phases"][player] = selected_phases[current_phase_index + 1]
+        
+        # Reset checkbox state
+        st.session_state["game_state"]["phases"][player] = False
     st.rerun()
 
 # Function to soft reset (keep players but reset scores)
@@ -88,7 +91,7 @@ player_name = st.text_input("Enter Player Name")
 if st.button("Add Player"):
     add_player(player_name)
 
-# Display Scoreboard with styling
+# Display Scoreboard with Streamlit Elements
 st.subheader("Current Scores & Phases")
 num_players = len(st.session_state["game_state"]["players"])
 num_cols = max(2, (num_players + 1) // 2)
@@ -96,18 +99,19 @@ cols = st.columns(num_cols)
 
 for i, player in enumerate(st.session_state["game_state"]["players"]):
     with cols[i % num_cols]:
-        st.markdown(
-            f"""
-            <div style="border-radius: 10px; padding: 15px; background-color: #2C5F2D; color: white;">
-                <h3>{player}</h3>
-                <p>Current Phase: <b>{st.session_state["game_state"]["phases"].get(player, PHASES[0])}</b></p>
-                <p style="font-size: 24px; font-weight: bold;">Total Score: {st.session_state["game_state"]["total_scores"].get(player, 0)}</p>
-                <input type="checkbox" id="phase_{player}" name="phase_{player}" value="Completed"> Phase Complete
-                <input type="number" min="0" id="score_{player}" name="score_{player}"> Score Input
-                <button onclick="update_score('{player}', document.getElementById('score_{player}').value, document.getElementById('phase_{player}').checked)">Update</button>
-            </div>
-            """, unsafe_allow_html=True
-        )
+        st.markdown(f"**{player}**")
+        st.write(f"Current Phase: {st.session_state["game_state"]["phases"].get(player, PHASES[0])}")
+        st.write(f"Total Score: {st.session_state["game_state"]["total_scores"].get(player, 0)}")
+        
+        # Checkbox for phase completion
+        completed = st.checkbox("Phase Complete", key=f"phase_{player}")
+        
+        # Score input
+        score_input = st.number_input(f"Score for {player}", min_value=0, key=f"score_{player}")
+        
+        # Update Button
+        if st.button(f"Update {player}"):
+            update_score(player, score_input, completed)
 
 # Buttons for resetting and updating
 st.button("Soft Reset", on_click=soft_reset)
